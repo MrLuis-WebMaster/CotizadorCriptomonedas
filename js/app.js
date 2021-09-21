@@ -23,16 +23,25 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 })
 
-function ConsultarCriptomonedas () {
+async function ConsultarCriptomonedas () {
     const url = "https://min-api.cryptocompare.com/data/top/mktcapfull?limit=10&tsym=USD";
-    fetch (url)
-        .then ( 
-            respuesta => respuesta.json()
-        )
-        .then ( resultado => ObtenerCriptomonedas(resultado.Data) )
-        .then (
-            Criptomonedas => CriptomonedasSelect(Criptomonedas)
-        )
+    // fetch (url)
+    //     .then ( 
+    //         respuesta => respuesta.json()
+    //     )
+    //     .then ( resultado => ObtenerCriptomonedas(resultado.Data) )
+    //     .then (
+    //         Criptomonedas => CriptomonedasSelect(Criptomonedas)
+    //     )
+
+    try {
+        const respuesta = await fetch(url);
+        const resultado = await respuesta.json();
+        const Criptomonedas = await ObtenerCriptomonedas(resultado.Data);
+        CriptomonedasSelect(Criptomonedas);
+    } catch (error) {
+        console.log(error)
+    }
 }
 
 function CriptomonedasSelect (Criptomonedas) {
@@ -68,22 +77,31 @@ function ValidarFormulario (e) {
 
 }
 
-function ConsultarAPI () {
+async function ConsultarAPI () {
     const {moneda,criptomoneda} = ObjDatos;
     url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda}`;
 
     MostrarSpinner();
 
-    fetch (url)
-        .then (
-            resultado => resultado.json()
-        )
+    // fetch (url)
+    //     .then (
+    //         resultado => resultado.json()
+    //     )
 
-        .then (
-            cotizacion => {
-                MostrarCotizacionHTML(cotizacion.DISPLAY[criptomoneda][moneda])
-            }
-        )
+    //     .then (
+    //         cotizacion => {
+    //             MostrarCotizacionHTML(cotizacion.DISPLAY[criptomoneda][moneda])
+    //         }
+    //     )
+    try {
+        const resultado = await fetch(url);
+        const cotizacion = await resultado.json();
+        MostrarCotizacionHTML(cotizacion.DISPLAY[criptomoneda][moneda]);
+    } catch (error) {
+        console.log(error) 
+    }
+
+    
 }
 
 function MostrarSpinner() {
